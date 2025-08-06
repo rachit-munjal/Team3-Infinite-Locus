@@ -24,7 +24,6 @@ A crowdsourced review platform where users can review, rate, and browse local bu
 Clone the repository:
 git clone https://github.com/rachit-munjal/Team3-Infinite-Locus.git
 
-####BACKEND####
 cd server
 npm install
 npm start
@@ -33,9 +32,8 @@ npm start
 MONGO_URI - <your_mongodb_uri>
 PORT - <port>
 JWT_SECRET_KEY - <your_jwt_secret_key>
-///////////////////////
+////////////
 
-####FRONTEND####
 cd client
 npm install
 npm run dev
