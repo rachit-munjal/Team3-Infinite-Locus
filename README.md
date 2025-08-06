@@ -28,3 +28,30 @@ A crowdsourced review platform where users can review, rate, and browse local bu
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/rachit-munjal/Team3-Infinite-Locus.git
+```
+### 2. Server Setup
+```bash
+cd server
+npm install
+```
+### 3. Client Setup
+```bash
+cd client
+npm install
+``` 
+### 4. Setup .env in Server Directory
+``` bash
+MONGO_URI = <your_mongoDb_url>
+PORT = <port_you_want_to_define>
+JWT_SECRET = <your_jwt_secret>
+```
+### 5. Run Server
+``` bash
+cd server
+npm start
+```
+### 6. Run Client
+``` bash
+cd client
+npm run dev
+```
