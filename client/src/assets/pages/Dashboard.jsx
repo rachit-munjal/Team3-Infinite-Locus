@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // ✅ Required for navigation
-import Navbar from '../components/Navbar';
+import Navbar from "/Users/rachit/Documents/InfiniteLocus-Team3/client/src/components/Navbar.jsx";
 
 const mockData = {
   Restaurant: ['Domino’s', 'Pizza Hut', 'Taco Bell', 'Subway'],
