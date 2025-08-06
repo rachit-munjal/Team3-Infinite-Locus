@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -14,23 +16,26 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ username: name, email, password }),
       });
 
-      if (response.success) {
-        const data = await response.json();
+      const data = await response.json();
+
+      if (response.ok) {
         console.log("User created successfully:", data);
         alert("Signup successful! You can now log in.");
-        // Optionally, redirect to the login page
+        navigate("/login");
       } else {
-        console.error("Signup failed:", response.statusText);
-        alert("Signup failed. Please try again.");
+        console.error("Signup failed:", data.message);
+        alert("Signup failed: " + data.message);
+        
       }
     } catch (error) {
       console.error("Error during signup:", error);
       alert("An error occurred. Please try again later.");
     }
   };
+
 
   return (
     <div className="min-w-screen min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 via-gray-900 to-black">

@@ -1,113 +1,63 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ Required for navigation
-import Navbar from "/Users/rachit/Documents/InfiniteLocus-Team3/client/src/components/Navbar.jsx";
+import React, { useEffect, useState } from "react";
+const token = localStorage.getItem("token");
+const userId = localStorage.getItem("userId");
 
-const mockData = {
-  Restaurant: ['Domino’s', 'Pizza Hut', 'Taco Bell', 'Subway'],
-  Service: ['Laundry Express', 'Quick Fix Plumbing', 'Happy Hair Salon'],
-  Shop: ['SuperMart', 'Gadget Zone', 'Clothing Hub'],
-};
+const Profile = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export default function Dashboard() {
-  const user = {
-    username: 'Saumya',
-    profilePicture: 'https://i.pravatar.cc/150?img=2',
-  };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/user/profile`, {
+          method: "GET",
+          credentials: "include"
+        });
 
-  const [selectedCategory, setSelectedCategory] = useState('Restaurant');
-  const [searchText, setSearchText] = useState('');
-  const [selectedBusiness, setSelectedBusiness] = useState('');
-  const navigate = useNavigate(); 
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile");
+        }
 
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-    setSearchText('');
-    setSelectedBusiness('');
-  };
+        const data = await response.json();
+        setUser(data.user);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredOptions = mockData[selectedCategory].filter((item) =>
-    item.toLowerCase().includes(searchText.toLowerCase())
-  );
+    fetchProfile();
+  }, []);
 
-  const handleSelect = (name) => {
-    setSelectedBusiness(name);
-    setSearchText(name);
-  };
+  if (loading) {
+    return <div className="text-center text-gray-700">Loading...</div>;
+  }
 
-  const handleGiveReview = () => {
-    if (!selectedCategory || !selectedBusiness) {
-      alert('Please select a category and a business before continuing.');
-      return;
-    }
-    const formattedBusiness = selectedBusiness.replace(/\s+/g, '-');
-
-    navigate(`/review/${selectedCategory.toLowerCase()}/${formattedBusiness.toLowerCase()}`);
-  };
+  if (error) {
+    return <div className="text-center text-red-500">Error: {error}</div>;
+  }
 
   return (
-    
-    <div className="min-h-screen bg-gray-100">
-      <Navbar user={user} />
-
-      <div className="flex justify-center items-center min-h-[calc(100vh-80px)] p-6">
-        <div className="bg-white p-10 rounded-lg shadow-md max-w-xl w-full text-center">
-          <h1 className="text-3xl font-bold mb-4 text-gray-800">Crowd Review</h1>
-          <p className="text-gray-600 mb-6">
-            Crowdsource your code reviews! <br />
-            Help other people review their code! Read more code!
-          </p>
-          <div className="flex justify-center gap-4 mb-4">
-            {['Restaurant', 'Service', 'Shop'].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleCategoryChange(cat)}
-                className={`px-4 py-2 rounded border ${
-                  selectedCategory === cat
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+    <div className="min-w-screen min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+        <h2 className="text-2xl font-bold text-center mb-4">User Profile</h2>
+        <div className="space-y-4">
+          <div>
+            <strong>Name:</strong> <span>{user.name}</span>
           </div>
-
-          {/* Search + Dropdown */}
-          <div className="relative w-full mb-6">
-            <input
-              type="text"
-              placeholder={`Search ${selectedCategory.toLowerCase()}s...`}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-            {searchText && (
-              <ul className="absolute z-10 bg-white border w-full mt-1 rounded shadow max-h-40 overflow-y-auto">
-                {filteredOptions.length > 0 ? (
-                  filteredOptions.map((option) => (
-                    <li
-                      key={option}
-                      onClick={() => handleSelect(option)}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-left"
-                    >
-                      {option}
-                    </li>
-                  ))
-                ) : (
-                  <li className="px-4 py-2 text-gray-500">No results found</li>
-                )}
-              </ul>
-            )}
+          <div>
+            <strong>Email:</strong> <span>{user.email}</span>
           </div>
-
-            <button
-    onClick={handleGiveReview}
-    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-  >
-    GIVE A REVIEW
-  </button>
+          <div>
+            <strong>Joined:</strong>{" "}
+            <span>{new Date(user.createdAt).toLocaleDateString()}</span>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Profile;

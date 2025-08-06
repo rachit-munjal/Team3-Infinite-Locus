@@ -12,9 +12,8 @@ const Login = () => {
     try {
       const response = await fetch("http://localhost:8000/user/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // 🔹 This is critical
         body: JSON.stringify({ email, password }),
       });
 
