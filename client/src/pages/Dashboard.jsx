@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ Required for navigation
 import Navbar from '../components/Navbar';
 
 const mockData = {
   Restaurant: ['Domino’s', 'Pizza Hut', 'Taco Bell', 'Subway'],
-  Service: ['Laundry Shop', 'Plumber Shop', 'Salon'],
-  Shop: ['SuperMart', 'Gadget shop', 'Clothing Shop', 'Nike Showroom'],
+  Service: ['Laundry Express', 'Quick Fix Plumbing', 'Happy Hair Salon'],
+  Shop: ['SuperMart', 'Gadget Zone', 'Clothing Hub'],
 };
 
 export default function Dashboard() {
@@ -13,17 +14,18 @@ export default function Dashboard() {
     profilePicture: 'https://i.pravatar.cc/150?img=2',
   };
 
-  const [Category, setCategory] = useState('Restaurant');
+  const [selectedCategory, setSelectedCategory] = useState('Restaurant');
   const [searchText, setSearchText] = useState('');
   const [selectedBusiness, setSelectedBusiness] = useState('');
+  const navigate = useNavigate(); 
 
   const handleCategoryChange = (category) => {
-    setCategory(category);
+    setSelectedCategory(category);
     setSearchText('');
     setSelectedBusiness('');
   };
 
-  const filteredOptions = mockData[Category].filter((item) =>
+  const filteredOptions = mockData[selectedCategory].filter((item) =>
     item.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -32,7 +34,18 @@ export default function Dashboard() {
     setSearchText(name);
   };
 
+  const handleGiveReview = () => {
+    if (!selectedCategory || !selectedBusiness) {
+      alert('Please select a category and a business before continuing.');
+      return;
+    }
+    const formattedBusiness = selectedBusiness.replace(/\s+/g, '-');
+
+    navigate(`/review/${selectedCategory.toLowerCase()}/${formattedBusiness.toLowerCase()}`);
+  };
+
   return (
+    
     <div className="min-h-screen bg-gray-100">
       <Navbar user={user} />
 
@@ -41,7 +54,7 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold mb-4 text-gray-800">Crowd Review</h1>
           <p className="text-gray-600 mb-6">
             Crowdsource your code reviews! <br />
-            
+            Help other people review their code! Read more code!
           </p>
           <div className="flex justify-center gap-4 mb-4">
             {['Restaurant', 'Service', 'Shop'].map((cat) => (
@@ -49,7 +62,7 @@ export default function Dashboard() {
                 key={cat}
                 onClick={() => handleCategoryChange(cat)}
                 className={`px-4 py-2 rounded border ${
-                  Category === cat
+                  selectedCategory === cat
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-800'
                 }`}
@@ -58,10 +71,12 @@ export default function Dashboard() {
               </button>
             ))}
           </div>
+
+          {/* Search + Dropdown */}
           <div className="relative w-full mb-6">
             <input
               type="text"
-              placeholder={`Search ${Category.toLowerCase()}s...`}
+              placeholder={`Search ${selectedCategory.toLowerCase()}s...`}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="w-full p-2 border rounded"
@@ -84,11 +99,13 @@ export default function Dashboard() {
               </ul>
             )}
           </div>
-          <div className="flex justify-center gap-4">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              GIVE A REVIEW
-            </button>
-          </div>
+
+            <button
+    onClick={handleGiveReview}
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+  >
+    GIVE A REVIEW
+  </button>
         </div>
       </div>
     </div>
